@@ -27,15 +27,17 @@ public class Map extends JPanel {
         setPreferredSize(new Dimension(preferredWidth, preferredHeight));
     }
     
-    public void addColor(int row, int col) {
+    public void addColor(int[][] points) {
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 Color randomColor = TERRAIN[0];
                 this.terrainGrid[i][j] = randomColor;
             }
         }
-        this.terrainGrid[row][col] = TERRAIN[1];
-        this.repaint();
+        for(int i = 0; i < points.length; i++) {
+        	this.terrainGrid[points[i][0]][points[i][1]] = TERRAIN[1];
+        }
+        
     }
 
     @Override
@@ -44,7 +46,7 @@ public class Map extends JPanel {
         g.clearRect(0, 0, getWidth(), getHeight());
         int rectWidth = getWidth() / NUM_ROWS;
         int rectHeight = getHeight() / NUM_COLS;
-
+        
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 int x = i * rectWidth;
@@ -54,6 +56,17 @@ public class Map extends JPanel {
                 g.fillRect(x, y, rectWidth, rectHeight);
             }
         }
+        
+        for(int i = 1; i < NUM_ROWS; i++) {
+                g.setColor(Color.getHSBColor(135, 135, 135));
+                g.drawLine(0, i * 24, i * NUM_ROWS * 24, i * 24);
+                for(int j = 1; j < NUM_COLS; j++) {
+                	g.drawLine(i * 24, 0, i * 24, i * NUM_ROWS * 24);
+                	
+                }
+
+        }
+        this.repaint();
     }
 
 }

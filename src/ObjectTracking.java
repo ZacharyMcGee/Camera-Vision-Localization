@@ -1,4 +1,10 @@
+import java.awt.BorderLayout;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 
 import org.opencv.core.Core;
@@ -26,7 +32,26 @@ public class ObjectTracking {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame("Localization Tilemap");
-                frame.add(tilemap);
+                
+                JMenu menu, submenu;  
+                JMenuItem i1, i2, i3, i4, i5;  
+                JMenuBar mb=new JMenuBar();  
+                menu=new JMenu("Menu");  
+                submenu=new JMenu("Sub Menu");  
+                i1=new JMenuItem("Item 1");  
+                i2=new JMenuItem("Item 2");  
+                i3=new JMenuItem("Item 3");  
+                i4=new JMenuItem("Item 4");  
+                i5=new JMenuItem("Item 5");
+                menu.add(i1); menu.add(i2); menu.add(i3);  
+                submenu.add(i4); submenu.add(i5);  
+                menu.add(submenu);  
+                mb.add(menu);  
+                frame.setJMenuBar(mb);  
+                
+                frame.setLayout(new BorderLayout());
+                frame.add(tilemap, BorderLayout.NORTH);
+                //frame.add(drawnWindow, BorderLayout.SOUTH);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.pack();
                 frame.setVisible(true);    
@@ -77,7 +102,6 @@ public class ObjectTracking {
 						
 						Imgproc.cvtColor(currentFrame, gray,
 								Imgproc.COLOR_RGB2GRAY);
-				        Imgproc.medianBlur(gray, gray, 5);
 					
 					}else
 						break;
@@ -97,15 +121,21 @@ public class ObjectTracking {
                 (double)image.rows()/16, 
                 100.0, 30.0, 1, 30); 
         
-        double[][] points = new double[circles.cols()][];
-        for (int x = 0; x < circles.cols(); x++) {
-            double[] c = circles.get(0, x);
-            Point center = new Point(Math.round(c[0]), Math.round(c[1]));
-            if(center.x != 0 || center.y != 0) {
-            	double[] point = {center.x, center.y};
-            	points[x] = point;
-            	map.addColor((int)Math.round(center.x) / 24, (int)Math.round(center.y) / 24);
-            }
+        if(circles.cols() > 0) {
+        	boolean found = false;
+        	int[][] points = new int[circles.cols()][];
+        	for (int x = 0; x < circles.cols(); x++) {
+            	double[] c = circles.get(0, x);
+            	Point center = new Point(Math.round(c[0]), Math.round(c[1]));
+            	if(center.x != 0 || center.y != 0) {
+            		found = true;
+            		int[] point = {(int)Math.round(center.x) / 24, (int)Math.round(center.y) / 24};
+            		points[x] = point;
+            	}
+        	}
+        	if(found) {
+        		map.addColor(points);
+        	}
         }
 	}
 	
