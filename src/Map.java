@@ -1,4 +1,7 @@
 import javax.swing.*;
+
+import org.opencv.core.Point;
+
 import java.awt.*;
 
 public class Map extends JPanel {
@@ -27,16 +30,17 @@ public class Map extends JPanel {
         setPreferredSize(new Dimension(preferredWidth, preferredHeight));
     }
     
-    public void addColor(int[][] points) {
+    public void addColor(Point center) {
         for (int i = 0; i < NUM_ROWS; i++) {
-            for (int j = 0; j < NUM_COLS; j++) {
+           for (int j = 0; j < NUM_COLS; j++) {
                 Color randomColor = TERRAIN[0];
                 this.terrainGrid[i][j] = randomColor;
             }
         }
-        for(int i = 0; i < points.length; i++) {
-        	this.terrainGrid[points[i][0]][points[i][1]] = TERRAIN[1];
-        }
+    	this.terrainGrid[(int) center.x / 24][(int) center.y / 24] = TERRAIN[1];
+        //for(int i = 0; i < points.length; i++) {
+        //	this.terrainGrid[points[i][0]][points[i][1]] = TERRAIN[1];
+        //}
         
     }
 

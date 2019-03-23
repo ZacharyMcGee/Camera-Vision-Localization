@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.highgui.Highgui;
 
 public class CameraView extends JFrame{
 	
@@ -36,7 +36,7 @@ public class CameraView extends JFrame{
 	public void showImage(Mat m)
 	{
 		MatOfByte matOfByte = new MatOfByte();
-		Imgcodecs.imencode(".jpg", m, matOfByte);
+		Highgui.imencode(".jpg", m, matOfByte);
 		
 		byte[] byteArray = matOfByte.toArray();
 		try
