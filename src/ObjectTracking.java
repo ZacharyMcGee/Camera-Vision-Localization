@@ -37,8 +37,11 @@ import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.*;
 
 public class ObjectTracking {
-	static int WIDTH = 640;
-	static int HEIGHT = 480;
+	static int WIDTH = 1280;
+	static int HEIGHT = 720;
+	
+	public static float theta = 0;
+	public static float thetaDes = 0;
 	
 	static CameraView thresholdWindow;
 	static CameraView drawnWindow;
@@ -47,6 +50,8 @@ public class ObjectTracking {
 	public static Mat template = null;
 	
 	public static Robot robot = new Robot();
+	
+	public static String state = "None";
 	
 	public static void main(String[] args)
 	{
@@ -88,6 +93,23 @@ public class ObjectTracking {
                             public void run() {
 
                                readFromCamera(tilemap);
+
+                            }
+                        });         
+                        hilo.start();
+            	    }
+            	});
+            	
+            	i2.addActionListener(new ActionListener() {
+
+            	    @Override
+            	    public void actionPerformed(ActionEvent e) {
+                        Thread hilo = new Thread(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                               setAngle();
 
                             }
                         });         
@@ -138,7 +160,7 @@ public class ObjectTracking {
 				        Mat sceneImage = currentFrame;
 				        
 				        MatOfKeyPoint objectKeyPoints = new MatOfKeyPoint();
-				        FeatureDetector featureDetector = FeatureDetector.create(FeatureDetector.FAST);
+				        FeatureDetector featureDetector = FeatureDetector.create(FeatureDetector.SURF);
 				        featureDetector.detect(template, objectKeyPoints);
 				        KeyPoint[] keypoints = objectKeyPoints.toArray();
 
@@ -242,7 +264,6 @@ public class ObjectTracking {
 				            MatOfDMatch goodMatches = new MatOfDMatch();
 				            goodMatches.fromList(goodMatchesList);
 				            //map.addColor(center);
-				            float theta = 0;
 				            
 				            theta = getAngle(homography, theta);
 				            
@@ -260,12 +281,26 @@ public class ObjectTracking {
 					//detectCircles(currentFrame);
 					//plotCircles(currentFrame, map);
 				}
-				//camera.release();
 			}
 
 		}
 	}
 }
+	
+	public static void setAngle() {
+		while(Math.abs(theta - thetaDes) > 15) {
+			robot.Left();
+			try {
+				robot.Stop();
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		robot.Stop();
+	}
+	
 	public static float getAngle(Mat normalised_homography, float theta)
 	{
 	    double a = normalised_homography.get(0, 0)[0];
